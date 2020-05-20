@@ -29,7 +29,7 @@ public class Reducer {
         for (Pair<String, Integer> pair : pairs) {
             GroupByPair<String, Integer> current;
 
-            if(cache.containsKey(pair.key)) {
+            if (cache.containsKey(pair.key)) {
                 current = cache.get(pair.key);
             } else {
                 current = new GroupByPair<>(pair.key);
