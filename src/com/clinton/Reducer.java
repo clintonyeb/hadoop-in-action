@@ -3,25 +3,18 @@ package com.clinton;
 import java.util.*;
 
 public class Reducer {
-    private List<Pair<String, Integer>> pairs;
+    private final List<Pair<String, Integer>> pairs;
+    private List<GroupByPair<String, Integer>> groupedPairs;
+    private List<Pair<String, Integer>> sumPairs;
 
-    private Reducer(List<Pair<String, Integer>> pairs) {
+    public Reducer(List<Pair<String, Integer>> pairs) {
         this.pairs = pairs;
     }
 
-    public static Reducer getInstance(List<Pair<String, Integer>> pairs) {
-        Reducer reducer = new Reducer(pairs);
-
-        List<GroupByPair<String, Integer>> groupedPairs = reducer.groupPairs();
-        System.out.println("\n\n===== Reducer Input =====");
-        reducer.printGroupPairList(groupedPairs);
-
-        List<Pair<String, Integer>> sumPairs = reducer.sumGroupPairs(groupedPairs);
-        System.out.println("\n\n===== Reducer Output =====");
-        reducer.printGroupPairSum(sumPairs);
-
-        return reducer;
-    }
+    public void reduce() {
+       groupedPairs = groupPairs();
+       sumPairs = sumGroupPairs(groupedPairs);
+   }
 
     private List<GroupByPair<String, Integer>> groupPairs() {
         Map<String, GroupByPair<String, Integer>> cache = new HashMap<>();
@@ -64,14 +57,14 @@ public class Reducer {
         return pairs;
     }
 
-    private void printGroupPairList(List<GroupByPair<String, Integer>> groups) {
-        for (GroupByPair<String, Integer> group : groups) {
+    public void printGroupPairList() {
+        for (GroupByPair<String, Integer> group : groupedPairs) {
             System.out.println(group);
         }
     }
 
-    private void printGroupPairSum(List<Pair<String, Integer>> pairs) {
-        for (Pair<String, Integer> pair : pairs) {
+    public void printGroupPairSum() {
+        for (Pair<String, Integer> pair : sumPairs) {
             System.out.println(pair);
         }
     }
