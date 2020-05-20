@@ -49,7 +49,7 @@ public class WordCount {
             for (Pair<String, Integer> pair : mapper.getPairs()) {
                 int partition = getPartition(pair.key);
                 List<Pair<String, Integer>> partitionPairs;
-                if(partitionedPairs.containsKey(partition)) {
+                if (partitionedPairs.containsKey(partition)) {
                     partitionPairs = partitionedPairs.get(partition);
                 } else {
                     partitionPairs = new ArrayList<>();
@@ -60,7 +60,7 @@ public class WordCount {
 
             for (int j = 0; j < r; j++) {
                 List<Pair<String, Integer>> pairs = partitionedPairs.get(j);
-                if(pairs == null) continue;
+                if (pairs == null) continue;
                 System.out.println(String.format("\n===== Pairs send from Mapper %d Reducer %d =====", i, j));
                 for (Pair<String, Integer> pair : partitionedPairs.get(j)) {
                     System.out.println(pair);
@@ -74,7 +74,7 @@ public class WordCount {
         for (int j = 0; j < r; j++) {
             assert (partitionedPairs.containsKey(j));
             List<Pair<String, Integer>> pairs = partitionedPairs.get(j);
-            if(pairs == null) continue;
+            if (pairs == null) continue;
 
             Reducer reducer = new Reducer(pairs);
             reducer.reduce();
@@ -84,7 +84,7 @@ public class WordCount {
         // print reduction results - input
         for (int j = 0; j < reducers.length; j++) {
             Reducer reducer = reducers[j];
-            if(reducer == null) continue;
+            if (reducer == null) continue;
             System.out.println(String.format("\n===== Reducer %d input =====", j));
             reducer.printGroupPairList();
         }
@@ -92,7 +92,7 @@ public class WordCount {
         // print reduction results - output
         for (int j = 0; j < reducers.length; j++) {
             Reducer reducer = reducers[j];
-            if(reducer == null) continue;
+            if (reducer == null) continue;
             System.out.println(String.format("\n===== Reducer %d output", j));
             reducer.printGroupPairSum();
         }

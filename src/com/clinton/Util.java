@@ -21,7 +21,7 @@ public abstract class Util {
         List<String> res = new ArrayList<>();
         for (String word : line.split(DELIMITER)) {
             String format = processWord(word);
-            if(format != null) res.add(format);
+            if (format != null) res.add(format);
         }
         return res;
     }
@@ -35,13 +35,13 @@ public abstract class Util {
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            if(!Character.isLetter(c)) {
-                if(i != 0 && i != text.length()-1) return null;
+            if (!Character.isLetter(c)) {
+                if (i != 0 && i != text.length() - 1) return null;
             } else {
                 res.append(c);
             }
         }
-        if(res.length() < 1) {
+        if (res.length() < 1) {
             return null;
         }
         return res.toString();

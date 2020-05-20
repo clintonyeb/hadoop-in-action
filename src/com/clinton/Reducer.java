@@ -12,9 +12,9 @@ public class Reducer {
     }
 
     public void reduce() {
-       groupedPairs = groupPairs();
-       sumPairs = sumGroupPairs(groupedPairs);
-   }
+        groupedPairs = groupPairs();
+        sumPairs = sumGroupPairs(groupedPairs);
+    }
 
     private List<GroupByPair<String, Integer>> groupPairs() {
         Map<String, GroupByPair<String, Integer>> cache = new HashMap<>();
@@ -22,7 +22,7 @@ public class Reducer {
         for (Pair<String, Integer> pair : pairs) {
             GroupByPair<String, Integer> current;
 
-            if(cache.containsKey(pair.key)) {
+            if (cache.containsKey(pair.key)) {
                 current = cache.get(pair.key);
             } else {
                 current = new GroupByPair<>(pair.key);

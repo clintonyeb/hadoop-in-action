@@ -1,8 +1,6 @@
 package com.clinton;
 
-import java.util.Comparator;
-
-public class Pair<K extends Comparable<? super  K>, V> {
+public class Pair<K extends Comparable<? super K>, V> {
     K key;
     V value;
 
