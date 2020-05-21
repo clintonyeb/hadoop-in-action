@@ -15,15 +15,15 @@ public class WordCount {
         this.r = r;
     }
 
-    public void start() throws IOException {
+    public void count() throws IOException {
         String[] texts = new String[3];
         texts[0] = "\"cat bat\" mat-pat mum.edu sat fat 'rat eat cat' mum_cs mat";
         texts[1] = "bat-hat mat pat \"oat hat rat mum_cs eat oat-pat";
         texts[2] = "zat lat-cat pat jat. hat rat. kat sat wat";
-        runMappers(texts);
+        run(texts);
     }
 
-    private void runMappers(String[] inputTexts) {
+    private void run(String[] inputTexts) {
         Mapper[] mappers = new Mapper[m];
 
         // create mappers
@@ -59,8 +59,7 @@ public class WordCount {
             }
 
             for (int j = 0; j < r; j++) {
-                List<Pair<String, Integer>> pairs = partitionedPairs.get(j);
-                if (pairs == null) continue;
+                if(!partitionedPairs.containsKey(j)) continue;
                 System.out.println(String.format("\n===== Pairs send from Mapper %d Reducer %d =====", i, j));
                 for (Pair<String, Integer> pair : partitionedPairs.get(j)) {
                     System.out.println(pair);
@@ -72,10 +71,8 @@ public class WordCount {
         Reducer[] reducers = new Reducer[r];
 
         for (int j = 0; j < r; j++) {
-            assert (partitionedPairs.containsKey(j));
+            if(!partitionedPairs.containsKey(j)) continue;
             List<Pair<String, Integer>> pairs = partitionedPairs.get(j);
-            if (pairs == null) continue;
-
             Reducer reducer = new Reducer(pairs);
             reducer.reduce();
             reducers[j] = reducer;
@@ -93,7 +90,7 @@ public class WordCount {
         for (int j = 0; j < reducers.length; j++) {
             Reducer reducer = reducers[j];
             if (reducer == null) continue;
-            System.out.println(String.format("\n===== Reducer %d output", j));
+            System.out.println(String.format("\n===== Reducer %d output =====", j));
             reducer.printGroupPairSum();
         }
     }
