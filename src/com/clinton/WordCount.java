@@ -41,6 +41,10 @@ public class WordCount {
         }
 
         Map<Integer, List<Pair<String, Integer>>> partitionedPairs = new HashMap<>();
+        // populate initial map with reducers
+        for (int i = 0; i < mappers.length; i++) {
+            partitionedPairs.put(i, new ArrayList<>());
+        }
 
         for (int i = 0; i < mappers.length; i++) {
             Mapper mapper = mappers[i];
@@ -48,18 +52,12 @@ public class WordCount {
             // Create reducer splits
             for (Pair<String, Integer> pair : mapper.getPairs()) {
                 int partition = getPartition(pair.key);
-                List<Pair<String, Integer>> partitionPairs;
-                if (partitionedPairs.containsKey(partition)) {
-                    partitionPairs = partitionedPairs.get(partition);
-                } else {
-                    partitionPairs = new ArrayList<>();
-                }
+                List<Pair<String, Integer>> partitionPairs = partitionedPairs.get(partition);
                 partitionPairs.add(pair);
                 partitionedPairs.put(partition, partitionPairs);
             }
 
             for (int j = 0; j < r; j++) {
-                if(!partitionedPairs.containsKey(j)) continue;
                 System.out.println(String.format("\n===== Pairs send from Mapper %d Reducer %d =====", i, j));
                 for (Pair<String, Integer> pair : partitionedPairs.get(j)) {
                     System.out.println(pair);
@@ -71,7 +69,6 @@ public class WordCount {
         Reducer[] reducers = new Reducer[r];
 
         for (int j = 0; j < r; j++) {
-            if(!partitionedPairs.containsKey(j)) continue;
             List<Pair<String, Integer>> pairs = partitionedPairs.get(j);
             Reducer reducer = new Reducer(pairs);
             reducer.reduce();
