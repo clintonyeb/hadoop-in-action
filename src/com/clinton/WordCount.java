@@ -7,44 +7,35 @@ import java.util.List;
 import java.util.Map;
 
 public class WordCount {
-    private final int m;
-    private final int r;
+    private final int numberOfMappers;
+    private final int numberOfReducers;
+    private final String FILENAME = "src/com/clinton/mapper-%d.txt";
 
-    public WordCount(int m, int r) {
-        this.m = m;
-        this.r = r;
+    public WordCount(int numberOfMappers, int numberOfReducers) {
+        this.numberOfMappers = numberOfMappers;
+        this.numberOfReducers = numberOfReducers;
     }
 
     public void count() throws IOException {
-        String[] texts = new String[3];
-        texts[0] = "\"cat bat\" mat-pat mum.edu sat fat 'rat eat cat' mum_cs mat";
-        texts[1] = "bat-hat mat pat \"oat hat rat mum_cs eat oat-pat";
-        texts[2] = "zat lat-cat pat jat. hat rat. kat sat wat";
-        run(texts);
+        run();
     }
 
-    private void run(String[] inputTexts) {
-        Mapper[] mappers = new Mapper[m];
+    private void run() throws IOException {
+        Mapper[] mappers = new Mapper[numberOfMappers];
 
-        // create mappers
-        for (int i = 0; i < m; i++) {
-            mappers[i] = new Mapper(Util.processLine(inputTexts[i]));
-        }
+        for (int i = 0; i < numberOfMappers; i++) {
+            // create mappers
+            Mapper mapper = new Mapper(String.format(FILENAME, i));
+            mappers[i] = mapper;
 
-        // perform mapping and print
-        for (int i = 0; i < mappers.length; i++) {
-            Mapper mapper = mappers[i];
+            // perform mapping and print
             mapper.map();
-
             System.out.println(String.format("\n===== Mapper %d Output =====", i));
             System.out.println(mapper);
         }
 
+
         Map<Integer, List<Pair<String, Integer>>> partitionedPairs = new HashMap<>();
-        // populate initial map with reducers
-        for (int i = 0; i < mappers.length; i++) {
-            partitionedPairs.put(i, new ArrayList<>());
-        }
 
         for (int i = 0; i < mappers.length; i++) {
             Mapper mapper = mappers[i];
@@ -52,12 +43,18 @@ public class WordCount {
             // Create reducer splits
             for (Pair<String, Integer> pair : mapper.getPairs()) {
                 int partition = getPartition(pair.key);
-                List<Pair<String, Integer>> partitionPairs = partitionedPairs.get(partition);
+                List<Pair<String, Integer>> partitionPairs;
+                if(partitionedPairs.containsKey(partition)) {
+                    partitionPairs = partitionedPairs.get(partition);
+                } else {
+                    partitionPairs = new ArrayList<>();
+                }
                 partitionPairs.add(pair);
                 partitionedPairs.put(partition, partitionPairs);
             }
 
-            for (int j = 0; j < r; j++) {
+            for (int j = 0; j < numberOfReducers; j++) {
+                if(!partitionedPairs.containsKey(j)) continue;
                 System.out.println(String.format("\n===== Pairs send from Mapper %d Reducer %d =====", i, j));
                 for (Pair<String, Integer> pair : partitionedPairs.get(j)) {
                     System.out.println(pair);
@@ -66,9 +63,10 @@ public class WordCount {
         }
 
         // Perform reduction for partitions
-        Reducer[] reducers = new Reducer[r];
+        Reducer[] reducers = new Reducer[numberOfReducers];
 
-        for (int j = 0; j < r; j++) {
+        for (int j = 0; j < numberOfReducers; j++) {
+            if(!partitionedPairs.containsKey(j)) continue;
             List<Pair<String, Integer>> pairs = partitionedPairs.get(j);
             Reducer reducer = new Reducer(pairs);
             reducer.reduce();
@@ -93,6 +91,6 @@ public class WordCount {
     }
 
     private int getPartition(String key) {
-        return key.hashCode() % r;
+        return key.hashCode() % numberOfReducers;
     }
 }

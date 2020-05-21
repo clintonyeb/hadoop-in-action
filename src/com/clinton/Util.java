@@ -11,9 +11,7 @@ public abstract class Util {
 
     public static List<String> getWordsFromFile(String fileName) throws IOException {
         List<String> res = new ArrayList<>();
-        Files.lines(Path.of(fileName)).forEach(line -> {
-            res.addAll(processLine(line));
-        });
+        Files.lines(Path.of(fileName)).forEach(line -> res.addAll(processLine(line)));
         return res;
     }
 
