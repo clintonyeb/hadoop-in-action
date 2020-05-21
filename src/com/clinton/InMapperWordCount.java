@@ -6,22 +6,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WordCount {
+public class InMapperWordCount {
     private final int m;
     private final int r;
     private final String FILENAME = "src/com/clinton/resources/mapper-%d.txt";
 
-    public WordCount(int m, int r) {
+    public InMapperWordCount(int m, int r) {
         this.m = m;
         this.r = r;
     }
 
     public void count() throws IOException {
-        run();
-    }
+        System.out.println();
+        System.out.println(String.format("Number of Input-Splits: %d", m));
+        System.out.println(String.format("Number of Reducers: %d", r));
 
-    private void run() throws IOException {
         Mapper[] mappers = new Mapper[m];
+
+        for (int i = 0; i < m; i++) {
+            System.out.println();
+            System.out.println(String.format("Mapper %d Input", i));
+            System.out.println(String.format(FILENAME, i));
+        }
 
         for (int i = 0; i < m; i++) {
             // create mappers
