@@ -24,6 +24,10 @@ public abstract class Util {
         return res;
     }
 
+    public static  <T> void printAll(List<T> list) {
+        list.forEach(System.out::println);
+    }
+
     private static String processWord(String w) {
         String word = w.trim().replaceAll("\"", "").toLowerCase();
         return formatText(word);

@@ -24,13 +24,4 @@ public class Mapper {
     public List<Pair<String, Integer>> getPairs() {
         return pairs;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        for (Pair<String, Integer> pair : pairs) {
-            builder.append(pair).append("\n");
-        }
-        return builder.toString();
-    }
 }

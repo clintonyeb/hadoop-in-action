@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 public class WordCount {
-    private final int numberOfMappers;
-    private final int numberOfReducers;
-    private final String FILENAME = "src/com/clinton/mapper-%d.txt";
+    private final int m;
+    private final int r;
+    private final String FILENAME = "src/com/clinton/resources/mapper-%d.txt";
 
-    public WordCount(int numberOfMappers, int numberOfReducers) {
-        this.numberOfMappers = numberOfMappers;
-        this.numberOfReducers = numberOfReducers;
+    public WordCount(int m, int r) {
+        this.m = m;
+        this.r = r;
     }
 
     public void count() throws IOException {
@@ -21,9 +21,9 @@ public class WordCount {
     }
 
     private void run() throws IOException {
-        Mapper[] mappers = new Mapper[numberOfMappers];
+        Mapper[] mappers = new Mapper[m];
 
-        for (int i = 0; i < numberOfMappers; i++) {
+        for (int i = 0; i < m; i++) {
             // create mappers
             Mapper mapper = new Mapper(String.format(FILENAME, i));
             mappers[i] = mapper;
@@ -31,7 +31,7 @@ public class WordCount {
             // perform mapping and print
             mapper.map();
             System.out.println(String.format("\n===== Mapper %d Output =====", i));
-            System.out.println(mapper);
+            Util.printAll(mapper.getPairs());
         }
 
 
@@ -53,19 +53,17 @@ public class WordCount {
                 partitionedPairs.put(partition, partitionPairs);
             }
 
-            for (int j = 0; j < numberOfReducers; j++) {
+            for (int j = 0; j < r; j++) {
                 if(!partitionedPairs.containsKey(j)) continue;
                 System.out.println(String.format("\n===== Pairs send from Mapper %d Reducer %d =====", i, j));
-                for (Pair<String, Integer> pair : partitionedPairs.get(j)) {
-                    System.out.println(pair);
-                }
+                Util.printAll(partitionedPairs.get(j));
             }
         }
 
         // Perform reduction for partitions
-        Reducer[] reducers = new Reducer[numberOfReducers];
+        Reducer[] reducers = new Reducer[r];
 
-        for (int j = 0; j < numberOfReducers; j++) {
+        for (int j = 0; j < r; j++) {
             if(!partitionedPairs.containsKey(j)) continue;
             List<Pair<String, Integer>> pairs = partitionedPairs.get(j);
             Reducer reducer = new Reducer(pairs);
@@ -78,7 +76,7 @@ public class WordCount {
             Reducer reducer = reducers[j];
             if (reducer == null) continue;
             System.out.println(String.format("\n===== Reducer %d input =====", j));
-            reducer.printGroupPairList();
+            Util.printAll(reducer.getGroupedPairs());
         }
 
         // print reduction results - output
@@ -86,11 +84,11 @@ public class WordCount {
             Reducer reducer = reducers[j];
             if (reducer == null) continue;
             System.out.println(String.format("\n===== Reducer %d output =====", j));
-            reducer.printGroupPairSum();
+            Util.printAll(reducer.getSumPairs());
         }
     }
 
     private int getPartition(String key) {
-        return key.hashCode() % numberOfReducers;
+        return key.hashCode() % r;
     }
 }

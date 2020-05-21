@@ -47,15 +47,11 @@ public class Reducer {
         return pairs;
     }
 
-    public void printGroupPairList() {
-        for (GroupByPair<String, Integer> group : groupedPairs) {
-            System.out.println(group);
-        }
+    public List<GroupByPair<String, Integer>> getGroupedPairs() {
+        return groupedPairs;
     }
 
-    public void printGroupPairSum() {
-        for (Pair<String, Integer> pair : sumPairs) {
-            System.out.println(pair);
-        }
+    public List<Pair<String, Integer>> getSumPairs() {
+        return sumPairs;
     }
 }
